@@ -1,0 +1,65 @@
+def exibir_tabuleiro(tabuleiro):
+    for linha in tabuleiro:
+        print("|".join(linha))
+        print("-" * 5)
+
+def verificar_vitoria(tabuleiro, jogador):
+    # Verificar linhas
+    for linha in tabuleiro:
+        if all([celula == jogador for celula in linha]):
+            return True
+    # Verificar colunas
+    for col in range(3):
+        if all([tabuleiro[linha][col] == jogador for linha in range(3)]):
+            return True
+    # Verificar diagonais
+    if all([tabuleiro[i][i] == jogador for i in range(3)]):
+        return True
+    if all([tabuleiro[i][2 - i] == jogador for i in range(3)]):
+        return True
+    return False
+
+def verificar_empate(tabuleiro):
+    return all([celula != ' ' for linha in tabuleiro for celula in linha])
+
+def obter_jogada():
+    while True:
+        try:
+            jogada = input("Digite sua jogada (linha e coluna separadas por espaço): ")
+            linha, coluna = map(int, jogada.split())
+            if linha in [1, 2, 3] and coluna in [1, 2, 3]:
+                return linha - 1, coluna - 1
+            else:
+                print("Entrada inválida. Tente novamente.")
+        except ValueError:
+            print("Entrada inválida. Tente novamente.")
+
+def jogar():
+    tabuleiro = [[' ' for _ in range(3)] for _ in range(3)]
+    jogadores = ['X', 'O']
+    jogador_atual = 0
+
+    print("Bem-vindo ao jogo da velha!")
+    exibir_tabuleiro(tabuleiro)
+
+    while True:
+        print(f"Turno do jogador {jogadores[jogador_atual]}")
+        linha, coluna = obter_jogada()
+
+        if tabuleiro[linha][coluna] == ' ':
+            tabuleiro[linha][coluna] = jogadores[jogador_atual]
+            exibir_tabuleiro(tabuleiro)
+
+            if verificar_vitoria(tabuleiro, jogadores[jogador_atual]):
+                print(f"Jogador {jogadores[jogador_atual]} venceu!")
+                break
+
+            if verificar_empate(tabuleiro):
+                print("O jogo terminou em empate!")
+                break
+
+            jogador_atual = 1 - jogador_atual
+        else:
+            print("Espaço já ocupado. Tente novamente.")
+
+    print("Obrigado por jogar!")
